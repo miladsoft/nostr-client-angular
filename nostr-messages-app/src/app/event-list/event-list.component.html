@@ -1,0 +1,17 @@
+<div class="chat-container">
+    <div class="header">
+      <button (click)="createUser()">Create New User</button>
+    </div>
+  
+    <div class="messages" #messagesContainer>
+      <div *ngFor="let event of events" class="message" [ngClass]="{'my-message': isMyMessage(event), 'other-message': !isMyMessage(event)}">
+        <div [innerHTML]="parseContent(event.content)"></div>
+      </div>
+    </div>
+  
+    <div class="footer">
+      <textarea [(ngModel)]="newEventContent" placeholder="Type a message..."></textarea>
+      <button (click)="addEvent()">Send</button>
+    </div>
+  </div>
+  
