@@ -81,7 +81,7 @@ export class RelayService {
   public addRelay(url: string): void {
     if (!this.relays.some((relay) => relay.url === url)) {
       this.relays.push({ url, connected: false });
-      this.connectToRelay({ url, connected: false }); // Attempt to connect to the new relay
+      this.connectToRelay({ url, connected: false });
     }
   }
 
