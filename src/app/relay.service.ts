@@ -18,8 +18,27 @@ export class RelayService {
 
   private loadRelaysFromLocalStorage(): { url: string, connected: boolean }[] {
     const defaultRelays = [
-      { url: 'wss://relay.angor.io', connected: false },
-      { url: 'wss://relay2.angor.io', connected: false }
+      { url: "wss://relay.angor.io", connected: false },
+      { url: "wss://relay2.angor.io", connected: false },
+      { url: "wss://relay.damus.io",connected: false },
+      { url: "wss://nostr.mom",connected: false },
+      { url: "wss://nostr.slothy.win",connected: false },
+      { url: "wss://relay.stoner.com",connected: false },
+      // { url:"wss://nostr.einundzwanzig.space",connected: false },
+      // { url:"wss://nos.lol",connected: false },
+      // { url:"wss://relay.nostr.band",connected: false },
+      // { url:"wss://relay.oldcity-bitcoiners.info",connected: false },
+      // { url:"wss://nostr.massmux.com",connected: false },
+      // { url:"wss://nostr-relay.schnitzel.world",connected: false },
+      // { url: "wss://relay.nostr.com.au",connected: false },
+      // { url: "wss://knostr.neutrine.com",connected: false },
+      // { url: "wss://nostr.nodeofsven.com",connected: false },
+      // { url: "wss://nostr.vulpem.com",connected: false },
+      // { url:"wss://relay.farscapian.com",connected: false },
+      // { url: "wss://relay.sovereign-stack.org",connected: false },
+      // { url: "wss://relay.lexingtonbitcoin.org",connected: false },
+      // { url: "wss://relay.plebstr.com",connected: false },
+      // { url:"wss://relay-pub.deschooling.us",connected: false }
     ];
     if (typeof localStorage !== 'undefined') {
       const storedRelays = JSON.parse(localStorage.getItem('nostrRelays') || '[]');
@@ -30,7 +49,7 @@ export class RelayService {
 
   public saveRelaysToLocalStorage() {
     if (typeof localStorage !== 'undefined') {
-      const customRelays = this.relays.filter(relay => !['wss://relay.angor.io', 'wss://relay2.angor.io'].includes(relay.url));
+      const customRelays = this.relays.filter(relay => !['wss://relay.angor.io', 'wss://relay2.angor.io','wss://relay.damus.io','wss://nostr.mom','wss://nostr.slothy.win','wss://relay.stoner.com'].includes(relay.url));
       localStorage.setItem('nostrRelays', JSON.stringify(customRelays));
     }
   }
