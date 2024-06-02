@@ -1,0 +1,17 @@
+<div class="user-list-container">
+    <h2>User List</h2>
+    <div class="user-form">
+      <input [(ngModel)]="newUserPubkey" placeholder="Enter user public key" />
+      <button (click)="addUser()">Add User</button>
+    </div>
+    <ul class="user-list">
+      <li *ngFor="let user of users" (click)="viewEvents(user.pubkey)">
+        <img *ngIf="user.picture" [src]="user.picture" alt="User Avatar" class="avatar">
+        <div class="user-info">
+          <span class="username">{{ user.name || user.pubkey }}</span>
+          <span class="pubkey">{{ user.pubkey }}</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+  

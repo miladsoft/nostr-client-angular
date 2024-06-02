@@ -1,4 +1,5 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NostrService } from '../nostr.service';
 import { NostrEvent } from 'nostr-tools';
 
@@ -9,18 +10,21 @@ import { NostrEvent } from 'nostr-tools';
 })
 export class EventListComponent implements OnInit {
   public events: NostrEvent[] = [];
-  public newEventContent: string = '';
-  private publicKey: string;
+  public userMetadata: any = {};
+  public publicKey: string = '';
   @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
 
-  constructor(private nostrService: NostrService) {
-    this.publicKey = this.nostrService.getPublicKeyHex();
-  }
+  constructor(
+    private nostrService: NostrService, 
+    private route: ActivatedRoute, 
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    this.nostrService.subscribeToEvents((event: NostrEvent) => {
-      this.events.push(event);
-      this.scrollToBottom();
+    this.route.params.subscribe(params => {
+      this.publicKey = this.nostrService.convertBech32ToHex(params['pubkey']);
+      this.loadUserProfile(this.publicKey);
+      this.loadEvents(this.publicKey);
     });
   }
 
@@ -30,21 +34,16 @@ export class EventListComponent implements OnInit {
 
   scrollToBottom(): void {
     try {
-      this.messagesContainer.nativeElement.scrollTop = this.messagesContainer.nativeElement.scrollHeight;
+      //this.messagesContainer.nativeElement.scrollTop = this.messagesContainer.nativeElement.scrollHeight;
     } catch(err) { }
   }
 
-  createUser() {
-    const account = this.nostrService.generateNewAccount();
-    this.publicKey = account.publicKey;
-    console.log(`New user created: ${account.publicKey}`);
+  async loadUserProfile(pubkey: string) {
+    this.userMetadata = await this.nostrService.fetchUserMetadata(pubkey);
   }
 
-  async addEvent() {
-    if (this.newEventContent.trim() !== '') {
-      await this.nostrService.publishEvent(this.newEventContent);
-      this.newEventContent = '';
-    }
+  async loadEvents(pubkey: string) {
+    this.events = await this.nostrService.fetchEvents(pubkey);
   }
 
   isMyMessage(event: NostrEvent): boolean {
@@ -52,7 +51,6 @@ export class EventListComponent implements OnInit {
   }
 
   parseContent(content: string): string {
-    // Enhanced parser for images, videos, links, and more
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     return content.replace(urlRegex, (url) => {
       if (url.match(/\.(jpeg|jpg|gif|png)$/) != null) {
@@ -70,5 +68,9 @@ export class EventListComponent implements OnInit {
         return `<a href="${url}" target="_blank" style="color: #007bff;">${url}</a>`;
       }
     }).replace(/\n/g, '<br>');
+  }
+
+  navigateToEvent(pubkey: string) {
+    this.router.navigate(['/events', pubkey]);
   }
 }

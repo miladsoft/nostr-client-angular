@@ -1,17 +1,30 @@
-<div class="chat-container">
-    <div class="header">
-      <button (click)="createUser()">Create New User</button>
-    </div>
-  
-    <div class="messages" #messagesContainer>
-      <div *ngFor="let event of events" class="message" [ngClass]="{'my-message': isMyMessage(event), 'other-message': !isMyMessage(event)}">
-        <div [innerHTML]="parseContent(event.content)"></div>
-      </div>
-    </div>
-  
-    <div class="footer">
-      <textarea [(ngModel)]="newEventContent" placeholder="Type a message..."></textarea>
-      <button (click)="addEvent()">Send</button>
+<div class="profile-container" *ngIf="userMetadata">
+  <div class="profile-banner" *ngIf="userMetadata.banner">
+    <img [src]="userMetadata.banner" alt="Profile Banner" class="profile-banner-img">
+  </div>
+  <div class="profile-info">
+    <img [src]="userMetadata.picture" alt="Profile Picture" class="profile-picture">
+    <div class="profile-details">
+      <h2>{{ userMetadata.display_name || 'Unknown User' }}</h2>
+      <p>{{ publicKey }}</p>
+      <p *ngIf="userMetadata.about">{{ userMetadata.about }}</p>
+      <p *ngIf="userMetadata.website"><a [href]="userMetadata.website" target="_blank">{{ userMetadata.website }}</a></p>
     </div>
   </div>
-  
+</div>
+
+<div class="chat-container">
+  <div class="messages" #messagesContainer>
+    <div *ngFor="let event of events" class="message" [ngClass]="{'my-message': isMyMessage(event), 'other-message': !isMyMessage(event)}">
+      <div [innerHTML]="parseContent(event.content)"></div>
+      <div *ngIf="event.tags && event.tags.length" class="reply-info">
+        Reply to:
+        <a (click)="navigateToEvent(event.tags[0][1])">{{ event.tags[0][1] }}</a>
+      </div>
+      <div class="event-details">
+        <span>{{ event.created_at | date:'short' }}</span>
+        <span>{{ event.kind === 1 ? 'Message' : 'Other' }}</span>
+      </div>
+    </div>
+  </div>
+</div>
